@@ -1,13 +1,22 @@
 import ovh
 import json
 import requests
+import asyncio
+import telegram
+from api import *
+from tg import *
 # Instantiate the client
 client = ovh.Client(
-endpoint='ovh-eu',
-application_key='',
-application_secret='',
-consumer_key='',
+endpoint=endpoint2,
+application_key=application_key2,
+application_secret=application_secret2,
+consumer_key=consumer_key2,
 )
+
+
+
+
+
 def get_public_ipv4():
     try:
         response = requests.get('https://api.ipify.org?format=json')
@@ -32,4 +41,8 @@ for z in zones:
         client.post(f'/domain/zone/{z}/record', fieldType='A', subDomain='dyn', target=new_ip, ttl=TTL)
         action = "created"
     client.post(f'/domain/zone/{z}/refresh')
+    
     print(f"{z}: dyn.{z} A {action} -> {new_ip}")
+    asyncio.run(connectionbot(f"{z}: dyn.{z} A {action} -> {new_ip}"))
+   
+
